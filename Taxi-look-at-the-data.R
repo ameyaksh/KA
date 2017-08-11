@@ -1,12 +1,13 @@
 setwd("F:/kaggle/nyc") # set the working directory
 
+library(ggplot2)
 library(dplyr)
 
 train <-  read.csv("train.csv") # load the training data
 test <- read.csv("test.csv") # load the test data
 
-str(train) # look at the structure of the training data
-str(test) # look at the structure of the test data
+#str(train) # look at the structure of the training data
+#str(test) # look at the structure of the test data
 
 # date_time variable is considered as a factor
 # let's split it in two variables : time & date
@@ -20,10 +21,10 @@ train$Dropoff_time <- as.POSIXct(train$dropoff_datetime)
 
 #let us check the datatype of the recently created variables
 
-str(train) # look at the structure of the training data
-str(test) # look at the structure of the test data
+#str(train) # look at the structure of the training data
+#str(test) # look at the structure of the test data
 
-# Perfect ! Because R works in memory it will helpful if remove unnecessary variables
+# Perfect ! Because R works in memory it will be helpful if remove unnecessary variables
 
 train$pickup_datetime <- NULL
 train$dropoff_datetime <-  NULL
@@ -55,6 +56,46 @@ test$dropoff_longitude <-  NULL
 test$dropoff_latitude <-  NULL
 
 # Let us clear out all the outliers 
+
+boxplot(train$trip_duration)
+plot(train$trip_duration)
+
+lr1 <- lm(trip_duration ~ haver, data=train)
+summary(lr1)
+plot(resid(lr1))
+summary(resid(lr1))
+boxplot(resid(lr1))
+
+# clearly we have outliers in trip duration 
+q <- quantile(train$trip_duration)
+
+#q[4] gives the value for 3rd quartile 
+#outlier = 
+
+train <- train[!(train$trip_duration > q[4] + IQR(train$trip_duration)*1.5 ),]
+train <- train[!(train$trip_duration < q[2] - IQR(train$trip_duration)*1.5 ),]
+
+lr2 <- lm(trip_duration ~ haver, data=train)
+summary(lr2)
+boxplot(resid(lr2))
+
+w <- quantile(train$haver)
+
+train <- train[!(train$haver > w[4] + IQR(train$haver)*1.5 ),]
+train <- train[!(train$haver < w[2] - IQR(train$haver)*1.5 ),]
+plot(train$haver)
+lr3 <- lm(trip_duration ~ haver, data=train)
+summary(lr3)
+
+lr4 <- lm(trip_duration ~ haver + passenger_count, data=train)
+summary(lr4)
+
+# lr 3= 0.4637 & lr4 = .4638 so hardly any improvement
+# lets us 0 passenger records & 7 & above .. 
+
+train <- train[!(train$passenger_count==0),]
+train <- train[!(train$passenger_count>=7),]
+plot(lr4)
 
 
 #numeric_train <- data.frame(train$passenger_count,train$trip_duration,train$haver)
