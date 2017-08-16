@@ -128,8 +128,8 @@ test$Pickup_time2 <- as.numeric(test$Pickup_time) - as.numeric(org_time)
 #plot(resid(lr6))
 
 
-train$wd <- as.integer(as.POSIXlt(train$Pickup_date)$wday)
-test$wd <-as.integer( as.POSIXlt(test$Pickup_date)$wday)
+train$wd <- as.factor(as.POSIXlt(train$Pickup_date)$wday)
+test$wd <-as.factor( as.POSIXlt(test$Pickup_date)$wday)
 
 
 #lr6 <- lm(trip_duration ~ haver + passenger_count + wd + Pickup_time2 , data=train)
@@ -157,6 +157,142 @@ train$time_q <- difftime(train$Pickup_time,time_q1, units = "hours")
 lr7 <- lm(trip_duration ~ haver + passenger_count + wd + month , data=train)
 summary(lr7)
 
+#lr7_ <- predict(lr7,test)
+
+#lr7_sub <-  data.frame(id = test$id, trip_duration = lr7_)
+
+#write.csv(lr7_sub,file="lr7_sub.csv")
+
+
+
+#lr8 <- lm(trip_duration ~ haver + passenger_count + wd + month + store_and_fwd_flag + vendor_id , data=train)
+#summary(lr8)
+
+#newTrain <- data.frame(train$trip_duration,train$haver,train$month, train$passenger_count)
+#cor(newTrain, method = "pearson")
+
+
+library(hexbin)
+#plot(hexbin(log(train$trip_duration),log(train$haver))) # this shows kind of linearity bewteen the variables
+
+#plot(hexbin(train$trip_duration,train$haver))
+#plot(hexbin(train$trip_duration,log(train$haver)))
+#plot(hexbin(log(train$trip_duration),train$haver))
+
+#plot(hexbin(train$trip_duration,train$haver))
+
+#lr8 <- lm(log(trip_duration) ~ log(haver) , data=train)
+#summary(lr8)
+
+#plot(resid(lr8))
+#summary(resid(lr8))
+
+#qqnorm(resid(lr8))
+#qqline(resid(lr8))
+
+#lr9 <- lm(log(trip_duration) ~ log(haver) + wd , data=train) # the r squared value has increased after adding wd
+#summary(lr9)
+
+
+#lr9_ <- predict(lr9,test)
+
+#lr9_sub <-  data.frame(id = test$id, trip_duration = lr9_)
+
+#write.csv(lr9_sub,file="lr9_sub.csv")
+
+
+
+#lr10 <- lm(log(trip_duration) ~ log(haver) + wd + month  , data=train) # the r squared value has increased after adding wd
+#summary(lr10)
+
+#hist(train$trip_duration, breaks = 20)
+
+#lr10_ <- predict(lr9,test)
+
+#lr10_sub <-  data.frame(id = test$id, trip_duration = lr10_)
+
+#write.csv(lr10_sub,file="lr10_sub.csv")
+
+#plot(lr10)
+
+
+#library(rpart)
+#tree1 <- rpart(trip_duration ~ haver  , data = train, method="anova")
+
+#printcp(tree1)
+#plotcp(tree1)
+#print(tree1)
+#plot(tree1)
+#text(tree1)
+#rsq.rpart(tree1)
+
+
+#t1 <- predict(tree1, newdata = test )
+
+#t1_sub <-  data.frame(id = test$id, trip_duration = t1)
+
+#write.csv(t1_sub, file = "t1_sub.csv", row.names = FALSE)
+
+
+#library(gbm)
+
+#gbmtree <-  gbm(trip_duration ~  wd + month , data = train, n.trees = 100)
+#summary(gbmtree)
+#plot.gbm(gbmtree)
+
+#best.iter <- gbm.perf(gbmtree,method="OOB")
+#print(best.iter)
+
+#g1 <- predict.gbm(gbmtree,newdata=test, n.trees = 4000)
+
+#g1_sub <-  data.frame(id = test$id, trip_duration = g1)
+
+#write.csv(g1_sub, file = "g1_sub.csv", row.names = FALSE)
+
+
+
+#plot(hboxplot(train$trip_duration,train$haver))
+#plot(hexbin(train$trip_duration,train$passenger_count))
+#plot(hexbin(train$trip_duration,train$wd))
+#plot(hexbin(train$trip_duration,train$month))
+#plot(hexbin(train$trip_duration,train$store_and_fwd_flag))
+#plot(hexbin(train$trip_duration,train$vendor_id))
+
+#par(mfrow=c(2,2))
+#plot(lr8)
+#anova(lr8)
+
+#plot(hexbin(train$trip_duration))
+
+
+#lr8 <- lm(log(trip_duration) ~ haver + passenger_count + wd + month + store_and_fwd_flag + vendor_id , data=train)
+#summary(lr8)
+#vcov(lr8)
+
+
+# t value of vendor is less than 1 , hence let us see if removing this will decrease se and increase adjusted r squared 
+
+#lr9 <- lm(log(trip_duration) ~ haver , data=train)
+#summary(lr9)
+
+
+#summary(resid(lr9))
+
+# the mean of the residuals is 0
+
+#qplot(resid(lr9))
+
+#plot(resid(lr9))
+
+#leveragePlots(lr9)
+#qqnorm(train$trip_duration)
+#qqline(train$trip_duration)
+#plot(density(log(train$trip_duration)))
+
+#library(car)
+
+#durbinWatsonTest(lr8)
+
 
 
 
@@ -172,3 +308,4 @@ summary(lr7)
 #train.passenger_count           1.000000000         0.008470988  0.01030558
 #train.trip_duration             0.008470988         1.000000000  0.09477678
 #train.haver                     0.010305577         0.094776781  1.00000000
+
